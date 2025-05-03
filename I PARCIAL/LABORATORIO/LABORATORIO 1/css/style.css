@@ -1,0 +1,148 @@
+/* styles.css */
+
+/* Reset básico */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header y Footer */
+header, footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Contenedor general */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 80vh;
+}
+
+/* Sidebar */
+aside {
+    width: 200px;
+    background-color: #34495e;
+    padding: 20px;
+    color: white;
+}
+
+aside h3 {
+    margin-top: 0;
+}
+
+aside ul {
+    list-style: none;
+    padding: 0;
+}
+
+aside ul li {
+    margin-bottom: 10px;
+}
+
+aside ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 8px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+aside ul li a:hover {
+    background-color: #1abc9c;
+}
+
+/* Main */
+main {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Galería */
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.gallery-item {
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.gallery-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  
+
+/* Formulario de registro */
+.register-form {
+    display: grid;
+    gap: 15px;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.register-form label {
+    font-weight: bold;
+}
+
+/* Inputs y botones ordenados en fila */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.register-form input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.register-form button {
+    padding: 10px;
+    border: none;
+    background-color: #1abc9c;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.register-form button:hover {
+    background-color: #16a085;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}

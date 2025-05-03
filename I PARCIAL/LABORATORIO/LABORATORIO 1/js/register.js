@@ -1,107 +1,95 @@
-// Este archivo se encarga de crear la página para registrar una nueva imagen
+document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
 
-// Función para crear el header (igual que en index, para que las páginas sean similares)
-const crearHeader = () => {
+    // Crear Header
     const header = document.createElement('header');
-    header.textContent = 'Registro de Imagen';
-    header.style.backgroundColor = '#4CAF50';
+    header.innerHTML = '<h1>Registrar Imagen</h1>';
+    header.style.backgroundColor = '#2c3e50';
     header.style.color = 'white';
-    header.style.padding = '10px';
+    header.style.padding = '20px';
     header.style.textAlign = 'center';
-    return header;
-};
+    body.appendChild(header);
 
-// Función para crear el footer (también igual al index para que se vea bonito)
-const crearFooter = () => {
-    const footer = document.createElement('footer');
-    footer.textContent = '© 2025 - Laboratorio 1';
-    footer.style.backgroundColor = '#4CAF50';
-    footer.style.color = 'white';
-    footer.style.padding = '10px';
-    footer.style.textAlign = 'center';
-    return footer;
-};
+    // Crear contenedor general con sidebar y main
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.minHeight = '80vh';
+    body.appendChild(container);
 
-// Esta función crea el formulario para registrar la imagen
-const crearFormulario = () => {
+    // Crear Sidebar
+    const sidebar = document.createElement('aside');
+    sidebar.style.width = '200px';
+    sidebar.style.backgroundColor = '#ecf0f1';
+    sidebar.style.padding = '20px';
+    sidebar.innerHTML = `
+        <h3>Menú</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="register.html">Registrar</a></li>
+        </ul>
+    `;
+    container.appendChild(sidebar);
+
+    // Crear Main (contenedor del formulario)
+    const main = document.createElement('main');
+    main.style.flex = '1';
+    main.style.padding = '20px';
+    container.appendChild(main);
+
+    // Crear formulario de registro
     const form = document.createElement('form');
-    form.classList.add('formulario');
+    form.classList.add('register-form');
 
-    // Campo para ingresar la URL de la imagen
-    const labelUrl = document.createElement('label');
-    labelUrl.textContent = 'URL de la imagen:';
-    const inputUrl = document.createElement('input');
-    inputUrl.type = 'text';
-    inputUrl.required = true;
+    form.innerHTML = `
+        <div class="form-row">
+            <label for="title">Título:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
 
-    // Campo para ingresar la descripción
-    const labelDesc = document.createElement('label');
-    labelDesc.textContent = 'Descripción:';
-    const inputDesc = document.createElement('input');
-    inputDesc.type = 'text';
-    inputDesc.required = true;
-    inputDesc.minLength = 3; // La consigna dice mínimo 3 caracteres
+        <div class="form-row">
+            <label for="imageUrl">URL de la Imagen:</label>
+            <input type="url" id="imageUrl" name="imageUrl" required>
+        </div>
 
-    // Botón para enviar
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.textContent = 'Registrar Imagen';
+        <button type="submit">Registrar Imagen</button>
+    `;
 
-    // Los agrego al formulario
-    form.appendChild(labelUrl);
-    form.appendChild(inputUrl);
-    form.appendChild(document.createElement('br'));
+    main.appendChild(form);
 
-    form.appendChild(labelDesc);
-    form.appendChild(inputDesc);
-    form.appendChild(document.createElement('br'));
+    // Guardar imagen al enviar formulario 
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    form.appendChild(submitBtn);
+        const title = document.getElementById('title').value.trim();
+        const imageUrl = document.getElementById('imageUrl').value.trim();
 
-    // Manejar el evento submit (cuando el usuario envía el formulario)
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Esto evita que la página se recargue
-
-        const url = inputUrl.value.trim();
-        const descripcion = inputDesc.value.trim();
-
-        // Validar que los campos no estén vacíos
-        if (url === '' || descripcion.length < 3) {
-            alert('Por favor, ingrese una URL y una descripción de al menos 3 caracteres.');
+        // Validaciones
+        if (imageUrl === '') {
+            alert('Por favor ingrese la URL de la imagen.');
             return;
         }
 
-        // Recupero las imágenes que ya estaban guardadas (si no hay, pongo un array vacío)
-        const imagenes = JSON.parse(localStorage.getItem('imagenes')) || [];
+        if (title.length < 3) {
+            alert('El título debe tener al menos 3 caracteres.');
+            return;
+        }
 
-        // Creo el nuevo objeto con la imagen
-        const nuevaImagen = { url, descripcion };
+        const newImage = { title: title, src: imageUrl };
 
-        // Lo agrego al array
-        imagenes.push(nuevaImagen);
+        const images = JSON.parse(localStorage.getItem('galleryImages')) || [];
+        images.push(newImage);
+        localStorage.setItem('galleryImages', JSON.stringify(images));
 
-        // Guardo otra vez el array actualizado en el localStorage
-        localStorage.setItem('imagenes', JSON.stringify(imagenes));
-
-        // Redirijo a la página principal para que se vea la imagen nueva
-        window.location.href = 'index.html';
+        alert('Imagen registrada con éxito!');
+        form.reset();
     });
 
-    return form;
-};
-
-// Esta función arma toda la página (igual que hicimos en index)
-const setupRegisterPage = () => {
-    const app = document.getElementById('app');
-
-    const header = crearHeader();
-    const form = crearFormulario();
-    const footer = crearFooter();
-
-    app.appendChild(header);
-    app.appendChild(form);
-    app.appendChild(footer);
-};
-
-// Llamo a la función para que se cree la página cuando se abre
-setupRegisterPage();
+    // Crear Footer
+    const footer = document.createElement('footer');
+    footer.innerHTML = '<p>&copy; 2025 Galería Dinámica</p>';
+    footer.style.backgroundColor = '#2c3e50';
+    footer.style.color = 'white';
+    footer.style.padding = '10px';
+    footer.style.textAlign = 'center';
+    body.appendChild(footer);
+});
