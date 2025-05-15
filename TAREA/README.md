@@ -41,20 +41,21 @@ TAREA/
 
 
 ---
+🚀 Cómo ejecutar el proyecto
+Abre la carpeta TAREA en Visual Studio Code.
 
-## 🚀 Cómo ejecutar el proyecto
+Haz clic derecho sobre index.html y selecciona "Abrir con Live Server" (si lo tienes instalado) o simplemente ábrelo en un navegador moderno.
 
-1. Abre la carpeta `TAREA` en Visual Studio Code.
-2. Haz clic derecho sobre `index.html` y selecciona **"Abrir con Live Server"** (si lo tienes instalado) o simplemente ábrelo en un navegador moderno.
-3. Explora cada sección desde el menú de navegación.
+Explora cada sección desde el menú de navegación.
 
 ---
 
-## 👩‍💻 Autores
+👩‍💻 Autores
+Paredes Panata Camila Soledad
 
-- Camila Paredes
-- Bryan Andrés Ortiz Tomalá
+Ortiz Tomalo Bryan Andres
 
+Herrera Quinte Anahy Estefania
 ---
 
 ## 🧾 Licencia
