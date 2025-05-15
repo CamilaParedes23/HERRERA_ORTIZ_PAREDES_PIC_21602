@@ -27,18 +27,16 @@ Este proyecto consiste en una aplicación web modular desarrollada con **Web Com
 
 ## 📁 Estructura del proyecto
 
-```plaintext
-TAREA/
-├── components/
-│   ├── menu-navegacion.js
-│   ├── registro-producto.js
-│   ├── lista-productos.js
-│   ├── editar-producto.js
-│   └── footer-app.js
-├── app.js
-├── index.html
-└── README.md
-
+    TAREA/
+    ├── components/
+    │   ├── menu-navegacion.js
+    │   ├── registro-producto.js
+    │   ├── lista-productos.js
+    │   ├── editar-producto.js
+    │   └── footer-app.js
+    ├── app.js
+    ├── index.html
+    └── README.md
 
 ---
 
