@@ -2,7 +2,7 @@
 
 ## PROGRAMACIÓN INTEGRATIVA DE COMPONENTES  
 **NRC:** 21602  
-**Estudiantes:** Herrera Quinte Anahy Estefania, Ortiz Tomalo Bryan Andres, Camila Soledad Paredes Panata
+**Estudiantes:** Herrera Quinte Anahy Estefania, Ortiz Tomalo Bryan Andres, Paredes Panata Camila Soledad
 
 ---
 
