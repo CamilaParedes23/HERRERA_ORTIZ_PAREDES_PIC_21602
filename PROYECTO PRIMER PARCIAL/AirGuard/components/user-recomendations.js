@@ -16,7 +16,11 @@ class UserRecommendations extends HTMLElement {
       const recomendaciones = this.generarRecomendaciones(data.current);
       this.render(recomendaciones);
     } catch (error) {
-      this.shadowRoot.innerHTML = <p style="color:red;">${error.message}</p>;
+      this.shadowRoot.innerHTML = '';
+      const errorMsg = document.createElement('p');
+      errorMsg.style.color = 'red';
+      errorMsg.textContent = error.message;
+      this.shadowRoot.appendChild(errorMsg);
     }
   }
 
@@ -26,29 +30,48 @@ class UserRecommendations extends HTMLElement {
     if (current.temp_c < 10) recs.push("Hace frío. Abrígate bien.");
     if (current.wind_kph > 20) recs.push("Cuidado con los vientos fuertes.");
     if (current.condition.text.toLowerCase().includes("rain")) recs.push("Lleva paraguas.");
-
     return recs.length ? recs : ["Clima ideal. Disfruta tu día con precaución."];
   }
 
   render(recs) {
-    this.shadowRoot.innerHTML = `
-      <style>
-        .recomendaciones {
-          background: #f0fff4;
-          padding: 1rem;
-          border: 1px solid #c3e6cb;
-          border-radius: 8px;
-          font-family: sans-serif;
-        }
-        li {
-          margin-bottom: 0.5rem;
-        }
-      </style>
-      <div class="recomendaciones">
-        <h3>Recomendaciones del clima</h3>
-        <ul>${recs.map(r => <li>${r}</li>).join('')}</ul>
-      </div>
+    this.shadowRoot.innerHTML = '';
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .recomendaciones {
+        background: #f0fff4;
+        padding: 1rem;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        font-family: sans-serif;
+      }
+      li {
+        margin-bottom: 0.5rem;
+      }
     `;
+    this.shadowRoot.appendChild(style);
+
+    const container = this.createElementWithClass('div', 'recomendaciones');
+
+    const title = document.createElement('h3');
+    title.textContent = 'Recomendaciones del clima';
+    container.appendChild(title);
+
+    const list = document.createElement('ul');
+    recs.forEach(rec => {
+      const li = document.createElement('li');
+      li.textContent = rec;
+      list.appendChild(li);
+    });
+
+    container.appendChild(list);
+    this.shadowRoot.appendChild(container);
+  }
+
+  createElementWithClass(tag, className) {
+    const el = document.createElement(tag);
+    el.className = className;
+    return el;
   }
 }
 
