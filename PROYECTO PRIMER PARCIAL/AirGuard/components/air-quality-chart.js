@@ -60,7 +60,7 @@ class AirQualityChart extends HTMLElement {
     const colors = ['#36A2EB', '#FF6384', '#FFCE56'];
 
     new Chart(this.shadowRoot.getElementById('weatherChart'), {
-      type: 'bar',
+      type: 'doughnut',
       data: {
         labels,
         datasets: [{
