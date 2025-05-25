@@ -7,56 +7,89 @@ class AirQualityDashboard extends HTMLElement {
   }
 
   async connectedCallback() {
-    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
-
     try {
-      const res = await fetch(URL);
-      if (!res.ok) throw new Error("Error al obtener datos del clima");
-      const data = await res.json();
-      this.render(data);
+      const data = await this.fetchWeatherData();
+      this.renderDashboard(data);
     } catch (error) {
-      this.shadowRoot.innerHTML = `<p style="color:red;">${error.message}</p>`;
+      this.showError(error.message);
     }
   }
 
-  render(data) {
-    const current = data.current;
-    const location = data.location;
+  async fetchWeatherData() {
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes&lang=es`;
+    const res = await fetch(URL);
+    if (!res.ok) throw new Error("Error al obtener datos del clima");
+    return res.json();
+  }
 
-    this.shadowRoot.innerHTML = `
-      <style>
-        .dashboard {
-          background: #eef6ff;
-          padding: 1rem;
-          border-radius: 10px;
-          font-family: sans-serif;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .card {
-          background: white;
-          padding: 1rem;
-          border-radius: 8px;
-          margin-top: 1rem;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        h3 {
-          margin: 0;
-          color: #004085;
-        }
-      </style>
+  renderDashboard(data) {
+    const { location, current } = data;
 
-      <div class="dashboard">
-        <h3>Condiciones actuales en ${location.name}, ${location.country}</h3>
-        <div class="card">
-          <p><strong>Temperatura:</strong> ${current.temp_c} °C</p>
-          <p><strong>Humedad:</strong> ${current.humidity}%</p>
-          <p><strong>Presión:</strong> ${current.pressure_mb} hPa</p>
-          <p><strong>Viento:</strong> ${current.wind_kph} km/h</p>
-          <p><strong>Condición:</strong> ${current.condition.text}</p>
-          <p><strong>Calidad del aire (PM2.5):</strong> ${current.air_quality.pm2_5.toFixed(2)}</p>
-        </div>
-      </div>
+    this.shadowRoot.innerHTML = ''; // Limpiar todo
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .dashboard {
+        background: #eef6ff;
+        padding: 1rem;
+        border-radius: 10px;
+        font-family: sans-serif;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      h3 {
+        margin: 0;
+        color: #004085;
+      }
+      p {
+        margin: 0.5rem 0;
+      }
     `;
+    this.shadowRoot.appendChild(style);
+
+    const dashboard = this.createElementWithClass('div', 'dashboard');
+    const heading = document.createElement('h3');
+    heading.textContent = `Condiciones actuales en ${location.name}, ${location.country}`;
+    dashboard.appendChild(heading);
+
+    const card = this.createElementWithClass('div', 'card');
+    const dataItems = [
+      ["Temperatura", `${current.temp_c} °C`],
+      ["Humedad", `${current.humidity}%`],
+      ["Presión", `${current.pressure_mb} hPa`],
+      ["Viento", `${current.wind_kph} km/h`],
+      ["Condición", current.condition.text],
+      ["Calidad del aire (PM2.5)", current.air_quality.pm2_5.toFixed(2)]
+    ];
+
+    dataItems.forEach(([label, value]) => {
+      const p = document.createElement('p');
+      p.innerHTML = `<strong>${label}:</strong> ${value}`;
+      card.appendChild(p);
+    });
+
+    dashboard.appendChild(card);
+    this.shadowRoot.appendChild(dashboard);
+  }
+
+  createElementWithClass(tag, className) {
+    const el = document.createElement(tag);
+    el.className = className;
+    return el;
+  }
+
+  showError(message) {
+    this.shadowRoot.innerHTML = '';
+    const errorMsg = document.createElement('p');
+    errorMsg.style.color = 'red';
+    errorMsg.textContent = message;
+    this.shadowRoot.appendChild(errorMsg);
   }
 }
 

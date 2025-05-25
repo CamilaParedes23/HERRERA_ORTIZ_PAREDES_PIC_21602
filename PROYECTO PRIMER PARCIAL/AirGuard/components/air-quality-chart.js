@@ -7,26 +7,30 @@ class AirQualityChart extends HTMLElement {
   }
 
   async connectedCallback() {
-    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
-
     try {
-      const res = await fetch(URL);
-      if (!res.ok) throw new Error("Error al cargar datos");
-      const data = await res.json();
-
+      const data = await this.fetchWeatherData();
       this.render();
-      this.loadChart({
-        temp: data.current.temp_c,
-        humidity: data.current.humidity,
-        wind_speed: data.current.wind_kph / 3.6  // convertir km/h a m/s
-      });
+      this.drawChart(data);
     } catch (error) {
-      this.shadowRoot.innerHTML = `<p style="color:red;">Error al obtener datos del clima<br>${error.message}</p>`;
+      this.showError(error.message);
     }
   }
 
+  async fetchWeatherData() {
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
+    const res = await fetch(URL);
+    if (!res.ok) throw new Error("Error al cargar datos");
+    const data = await res.json();
+
+    return {
+      temp: data.current.temp_c,
+      humidity: data.current.humidity,
+      wind_speed: data.current.wind_kph / 3.6 // km/h a m/s
+    };
+  }
+
   render() {
-    this.shadowRoot.innerHTML = `
+    const style = `
       <style>
         .chart-container {
           max-width: 600px;
@@ -37,32 +41,46 @@ class AirQualityChart extends HTMLElement {
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
       </style>
-      <div class="chart-container">
-        <canvas id="weatherChart"></canvas>
-      </div>
     `;
+
+    const container = document.createElement('div');
+    container.className = 'chart-container';
+
+    const canvas = document.createElement('canvas');
+    canvas.id = 'weatherChart';
+
+    container.appendChild(canvas);
+    this.shadowRoot.innerHTML = style;
+    this.shadowRoot.appendChild(container);
   }
 
-  loadChart(current) {
-    const ctx = this.shadowRoot.getElementById('weatherChart');
-    new Chart(ctx, {
+  drawChart({ temp, humidity, wind_speed }) {
+    const labels = ['Temperatura (°C)', 'Humedad (%)', 'Viento (m/s)'];
+    const dataValues = [temp, humidity, wind_speed];
+    const colors = ['#36A2EB', '#FF6384', '#FFCE56'];
+
+    new Chart(this.shadowRoot.getElementById('weatherChart'), {
       type: 'bar',
       data: {
-        labels: ['Temperatura (°C)', 'Humedad (%)', 'Viento (m/s)'],
+        labels,
         datasets: [{
           label: 'Condiciones actuales',
-          data: [current.temp, current.humidity, current.wind_speed],
-          backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56']
+          data: dataValues,
+          backgroundColor: colors
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Condiciones actuales - Quito' }
+          title: { display: true, text: `Condiciones actuales - ${this.city}` }
         }
       }
     });
+  }
+
+  showError(message) {
+    this.shadowRoot.innerHTML = `<p style="color:red;">Error al obtener datos del clima<br>${message}</p>`;
   }
 }
 

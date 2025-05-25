@@ -23,55 +23,72 @@ class EducationSection extends HTMLElement {
   }
 
   render() {
-    const articleHTML = this.articles.map(article => `
-      <article class="card">
-        <h4>${article.title}</h4>
-        <p>${article.content}</p>
-      </article>
-    `).join('');
+    this.shadowRoot.innerHTML = ''; // Limpiar
 
-    this.shadowRoot.innerHTML = `
-      <style>
-        section {
-          max-width: 800px;
-          margin: 2rem auto;
-          padding: 1rem;
-        }
+    const style = document.createElement('style');
+    style.textContent = `
+      section {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
 
-        h3 {
-          text-align: center;
-          margin-bottom: 1rem;
-          color: #2c3e50;
-        }
+      h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+      }
 
-        .card {
-          background: #ffffff;
-          margin-bottom: 1rem;
-          padding: 1rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-          transition: transform 0.2s ease;
-        }
+      .card {
+        background: #ffffff;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease;
+      }
 
-        .card:hover {
-          transform: translateY(-3px);
-        }
+      .card:hover {
+        transform: translateY(-3px);
+      }
 
-        h4 {
-          margin-top: 0;
-          color: #2980b9;
-        }
+      h4 {
+        margin-top: 0;
+        color: #2980b9;
+      }
 
-        p {
-          margin: 0.5rem 0 0;
-        }
-      </style>
-
-      <section>
-        <h3>Educación sobre la Contaminación del Aire</h3>
-        ${articleHTML}
-      </section>
+      p {
+        margin: 0.5rem 0 0;
+      }
     `;
+    this.shadowRoot.appendChild(style);
+
+    const section = document.createElement('section');
+    const title = document.createElement('h3');
+    title.textContent = 'Educación sobre la Contaminación del Aire';
+    section.appendChild(title);
+
+    this.articles.forEach(({ title, content }) => {
+      const card = this.createElementWithClass('article', 'card');
+
+      const h4 = document.createElement('h4');
+      h4.textContent = title;
+
+      const p = document.createElement('p');
+      p.textContent = content;
+
+      card.appendChild(h4);
+      card.appendChild(p);
+      section.appendChild(card);
+    });
+
+    this.shadowRoot.appendChild(section);
+  }
+
+  createElementWithClass(tag, className) {
+    const el = document.createElement(tag);
+    el.className = className;
+    return el;
   }
 }
 
