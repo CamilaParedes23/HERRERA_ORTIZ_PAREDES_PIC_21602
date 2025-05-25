@@ -17,41 +17,32 @@ class DataCrud extends HTMLElement {
     const searchInput = this.shadowRoot.querySelector('#searchInput');
     const cancelBtn = this.shadowRoot.querySelector('#cancelBtn');
 
-    // Agregar/Actualizar
     addBtn.addEventListener('click', () => {
       if (input.value.trim()) {
         if (this.editingIndex === -1) {
-          // Crear nuevo
           this.recomendaciones.push({
             id: Date.now(),
             text: input.value.trim(),
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString()
+            createdAt: new Date().toLocaleString()
           });
         } else {
-          // Actualizar existente
           this.recomendaciones[this.editingIndex].text = input.value.trim();
-          this.recomendaciones[this.editingIndex].updatedAt = new Date().toLocaleString();
           this.cancelEdit();
         }
         this.updateStorage();
         input.value = '';
         this.renderList();
-        this.showNotification('¡Operación exitosa!', 'success');
       }
     });
 
-    // Cancelar edición
     cancelBtn.addEventListener('click', () => {
       this.cancelEdit();
     });
 
-    // Búsqueda
     searchInput.addEventListener('input', (e) => {
       this.filterList(e.target.value);
     });
 
-    // Enter para agregar
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         addBtn.click();
@@ -64,11 +55,10 @@ class DataCrud extends HTMLElement {
   }
 
   remove(index) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta recomendación?')) {
+    if (confirm('¿Eliminar esta recomendación?')) {
       this.recomendaciones.splice(index, 1);
       this.updateStorage();
       this.renderList();
-      this.showNotification('Elemento eliminado', 'success');
     }
   }
 
@@ -80,11 +70,7 @@ class DataCrud extends HTMLElement {
     
     input.value = this.recomendaciones[index].text;
     addBtn.textContent = 'Actualizar';
-    addBtn.className = 'btn btn-warning';
     cancelBtn.style.display = 'inline-block';
-    
-    // Scroll al input y focus
-    input.scrollIntoView({ behavior: 'smooth' });
     input.focus();
   }
 
@@ -96,7 +82,6 @@ class DataCrud extends HTMLElement {
     
     input.value = '';
     addBtn.textContent = 'Agregar';
-    addBtn.className = 'btn btn-primary';
     cancelBtn.style.display = 'none';
   }
 
@@ -104,50 +89,24 @@ class DataCrud extends HTMLElement {
     const items = this.shadowRoot.querySelectorAll('.list-item');
     items.forEach(item => {
       const text = item.querySelector('.item-text').textContent.toLowerCase();
-      if (text.includes(searchTerm.toLowerCase())) {
-        item.style.display = 'block';
-      } else {
-        item.style.display = 'none';
-      }
+      item.style.display = text.includes(searchTerm.toLowerCase()) ? 'block' : 'none';
     });
-  }
-
-  showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    this.shadowRoot.appendChild(notification);
-    
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
-        }
-      }, 300);
-    }, 3000);
   }
 
   renderList() {
     const list = this.shadowRoot.querySelector('#recoList');
     const emptyState = this.shadowRoot.querySelector('#emptyState');
-    const itemCount = this.shadowRoot.querySelector('#itemCount');
+    const count = this.shadowRoot.querySelector('#count');
     
     list.innerHTML = '';
+    count.textContent = `${this.recomendaciones.length} elementos`;
 
     if (this.recomendaciones.length === 0) {
       emptyState.style.display = 'block';
-      itemCount.textContent = '0 recomendaciones';
       return;
     }
 
     emptyState.style.display = 'none';
-    itemCount.textContent = `${this.recomendaciones.length} recomendación${this.recomendaciones.length !== 1 ? 'es' : ''}`;
 
     this.recomendaciones.forEach((rec, index) => {
       const li = document.createElement('li');
@@ -156,27 +115,16 @@ class DataCrud extends HTMLElement {
       li.innerHTML = `
         <div class="item-content">
           <div class="item-text">${rec.text}</div>
-          <div class="item-meta">
-            <small>Creado: ${rec.createdAt}</small>
-            ${rec.updatedAt !== rec.createdAt ? `<small>Actualizado: ${rec.updatedAt}</small>` : ''}
-          </div>
+          <small class="item-date">${rec.createdAt}</small>
         </div>
         <div class="item-actions">
-          <button class="btn btn-sm btn-secondary edit-btn" data-index="${index}">
-            ✏️ Editar
-          </button>
-          <button class="btn btn-sm btn-danger delete-btn" data-index="${index}">
-            🗑️ Eliminar
-          </button>
+          <button class="btn-edit" data-index="${index}">Editar</button>
+          <button class="btn-delete" data-index="${index}">Eliminar</button>
         </div>
       `;
 
-      // Eventos para los botones
-      const editBtn = li.querySelector('.edit-btn');
-      const deleteBtn = li.querySelector('.delete-btn');
-      
-      editBtn.addEventListener('click', () => this.edit(index));
-      deleteBtn.addEventListener('click', () => this.remove(index));
+      li.querySelector('.btn-edit').addEventListener('click', () => this.edit(index));
+      li.querySelector('.btn-delete').addEventListener('click', () => this.remove(index));
 
       list.appendChild(li);
     });
@@ -187,130 +135,87 @@ class DataCrud extends HTMLElement {
       <style>
         * {
           box-sizing: border-box;
+          margin: 0;
+          padding: 0;
         }
 
-        .crud-container {
-          max-width: 800px;
-          margin: 0 auto;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 20px;
+        .container {
+          max-width: 600px;
+          margin: 2rem auto;
           padding: 2rem;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          color: white;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+          line-height: 1.5;
+          color: #333;
         }
 
         .header {
-          text-align: center;
           margin-bottom: 2rem;
+          text-align: center;
         }
 
         .header h2 {
-          margin: 0 0 0.5rem 0;
-          font-size: 2rem;
-          font-weight: 700;
-          background: linear-gradient(45deg, #fff, #f0f0f0);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #2c3e50;
+          margin-bottom: 0.5rem;
         }
 
-        .stats {
-          background: rgba(255,255,255,0.1);
-          padding: 0.5rem 1rem;
-          border-radius: 50px;
-          display: inline-block;
-          backdrop-filter: blur(10px);
+        .count {
+          font-size: 0.875rem;
+          color: #666;
         }
 
         .form-section {
-          background: rgba(255,255,255,0.1);
-          padding: 1.5rem;
-          border-radius: 15px;
           margin-bottom: 2rem;
-          backdrop-filter: blur(10px);
+          padding-bottom: 2rem;
+          border-bottom: 1px solid #eee;
         }
 
         .form-group {
           margin-bottom: 1rem;
         }
 
-        .form-control {
+        .input {
           width: 100%;
-          padding: 0.75rem 1rem;
-          border: 2px solid rgba(255,255,255,0.2);
-          border-radius: 10px;
-          background: rgba(255,255,255,0.1);
-          color: white;
+          padding: 0.75rem;
+          border: 1px solid #ddd;
+          border-radius: 4px;
           font-size: 1rem;
-          transition: all 0.3s ease;
-          backdrop-filter: blur(5px);
+          transition: border-color 0.2s;
         }
 
-        .form-control:focus {
+        .input:focus {
           outline: none;
-          border-color: rgba(255,255,255,0.5);
-          background: rgba(255,255,255,0.2);
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .form-control::placeholder {
-          color: rgba(255,255,255,0.7);
+          border-color: #007bff;
         }
 
         .btn-group {
           display: flex;
           gap: 0.5rem;
-          flex-wrap: wrap;
         }
 
         .btn {
           padding: 0.75rem 1.5rem;
-          border: none;
-          border-radius: 10px;
-          font-size: 1rem;
-          font-weight: 600;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background: white;
+          font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
+          transition: all 0.2s;
         }
 
         .btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .btn:active {
-          transform: translateY(0);
+          background: #f8f9fa;
         }
 
         .btn-primary {
-          background: linear-gradient(45deg, #4CAF50, #45a049);
+          background: #007bff;
+          border-color: #007bff;
           color: white;
         }
 
-        .btn-warning {
-          background: linear-gradient(45deg, #ff9800, #e68900);
-          color: white;
-        }
-
-        .btn-secondary {
-          background: linear-gradient(45deg, #6c757d, #5a6268);
-          color: white;
-        }
-
-        .btn-danger {
-          background: linear-gradient(45deg, #f44336, #da190b);
-          color: white;
-        }
-
-        .btn-sm {
-          padding: 0.5rem 1rem;
-          font-size: 0.875rem;
+        .btn-primary:hover {
+          background: #0056b3;
         }
 
         #cancelBtn {
@@ -321,47 +226,35 @@ class DataCrud extends HTMLElement {
           margin-bottom: 1.5rem;
         }
 
-        .list-section {
-          background: rgba(255,255,255,0.1);
-          border-radius: 15px;
-          padding: 1.5rem;
-          backdrop-filter: blur(10px);
-        }
-
-        .list-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        .list-section h3 {
+          font-size: 1.125rem;
           margin-bottom: 1rem;
-        }
-
-        .list-header h3 {
-          margin: 0;
-          font-size: 1.5rem;
+          color: #2c3e50;
         }
 
         #recoList {
           list-style: none;
-          padding: 0;
-          margin: 0;
         }
 
         .list-item {
-          background: rgba(255,255,255,0.1);
+          background: #f0f9f0;
+          border: 1px solid #d4edda;
+          border-radius: 8px;
+          padding: 1.5rem;
           margin-bottom: 1rem;
-          border-radius: 12px;
-          padding: 1rem;
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          transition: all 0.3s ease;
-          border: 1px solid rgba(255,255,255,0.1);
+          transition: all 0.2s ease;
         }
 
         .list-item:hover {
-          background: rgba(255,255,255,0.2);
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          background: #e8f5e8;
+          border-color: #c3e6cb;
+        }
+
+        .list-item:last-child {
+          margin-bottom: 0;
         }
 
         .item-content {
@@ -370,21 +263,16 @@ class DataCrud extends HTMLElement {
         }
 
         .item-text {
-          font-size: 1.1rem;
-          font-weight: 500;
+          font-size: 1rem;
           margin-bottom: 0.5rem;
+          color: #2d5016;
+          font-weight: 500;
           line-height: 1.4;
         }
 
-        .item-meta {
-          display: flex;
-          flex-direction: column;
-          gap: 0.2rem;
-        }
-
-        .item-meta small {
-          color: rgba(255,255,255,0.7);
-          font-size: 0.8rem;
+        .item-date {
+          font-size: 0.75rem;
+          color: #5a7c65;
         }
 
         .item-actions {
@@ -393,53 +281,58 @@ class DataCrud extends HTMLElement {
           flex-shrink: 0;
         }
 
+        .btn-edit, .btn-delete {
+          padding: 0.5rem 1rem;
+          border: 1px solid rgba(45, 80, 22, 0.2);
+          border-radius: 6px;
+          background: rgba(255, 255, 255, 0.8);
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: #2d5016;
+        }
+
+        .btn-edit:hover {
+          background: white;
+          border-color: #28a745;
+          color: #28a745;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-delete:hover {
+          background: white;
+          border-color: #dc3545;
+          color: #dc3545;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .empty-state {
           text-align: center;
           padding: 3rem 1rem;
-          color: rgba(255,255,255,0.7);
+          color: #666;
         }
 
-        .empty-state-icon {
-          font-size: 4rem;
-          margin-bottom: 1rem;
+        .empty-state h3 {
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          color: #999;
         }
 
-        .notification {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          padding: 1rem 1.5rem;
-          border-radius: 10px;
-          color: white;
-          font-weight: 600;
-          z-index: 1000;
-          transform: translateX(400px);
-          transition: transform 0.3s ease;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .empty-state p {
+          font-size: 0.875rem;
+          color: #aaa;
         }
 
-        .notification.show {
-          transform: translateX(0);
-        }
-
-        .notification.success {
-          background: linear-gradient(45deg, #4CAF50, #45a049);
-        }
-
-        .notification.error {
-          background: linear-gradient(45deg, #f44336, #da190b);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-          .crud-container {
+        @media (max-width: 640px) {
+          .container {
             margin: 1rem;
             padding: 1rem;
           }
 
           .list-item {
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
+            align-items: stretch;
           }
 
           .item-content {
@@ -447,80 +340,56 @@ class DataCrud extends HTMLElement {
           }
 
           .item-actions {
-            align-self: stretch;
+            justify-content: flex-end;
           }
 
           .btn-group {
             flex-direction: column;
           }
-
-          .btn {
-            width: 100%;
-            justify-content: center;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header h2 {
-            font-size: 1.5rem;
-          }
-
-          .item-actions {
-            flex-direction: column;
-          }
         }
       </style>
 
-      <div class="crud-container">
-        <div class="header">
-          <h2>📝 Gestor de Recomendaciones</h2>
-          <div class="stats">
-            <span id="itemCount">0 recomendaciones</span>
-          </div>
-        </div>
+      <div class="container">
+        <header class="header">
+          <h2>Recomendaciones</h2>
+          <div class="count" id="count">0 elementos</div>
+        </header>
 
-        <div class="form-section">
+        <section class="form-section">
           <div class="form-group">
             <input 
               type="text" 
               id="recoInput" 
-              class="form-control" 
-              placeholder="✨ Escribe tu recomendación aquí..."
+              class="input" 
+              placeholder="Nueva recomendación..."
               maxlength="200"
             >
           </div>
           <div class="btn-group">
-            <button id="addBtn" class="btn btn-primary">
-              ➕ Agregar
-            </button>
-            <button id="cancelBtn" class="btn btn-secondary">
-              ❌ Cancelar
-            </button>
+            <button id="addBtn" class="btn btn-primary">Agregar</button>
+            <button id="cancelBtn" class="btn">Cancelar</button>
           </div>
-        </div>
+        </section>
 
-        <div class="search-section">
+        <section class="search-section">
           <input 
             type="text" 
             id="searchInput" 
-            class="form-control" 
-            placeholder="🔍 Buscar recomendaciones..."
+            class="input" 
+            placeholder="Buscar..."
           >
-        </div>
+        </section>
 
-        <div class="list-section">
-          <div class="list-header">
-            <h3>📋 Mis Recomendaciones</h3>
-          </div>
+        <section class="list-section">
+          <h3>Lista</h3>
           
           <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">📝</div>
-            <h3>¡Aún no hay recomendaciones!</h3>
-            <p>Agrega tu primera recomendación usando el formulario de arriba.</p>
+            <h3>No hay recomendaciones</h3>
+            <p>Agrega una nueva recomendación para comenzar.</p>
           </div>
           
           <ul id="recoList"></ul>
-        </div>
+        </section>
       </div>
     `;
 
