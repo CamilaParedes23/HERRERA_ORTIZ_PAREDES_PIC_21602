@@ -1,4 +1,4 @@
-class MainMenu extends HTMLElement {
+class NavSidebar extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -11,57 +11,46 @@ class MainMenu extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>
-        nav {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 2rem;
-          background: linear-gradient(to right, #4facfe, #00f2fe);
+        aside {
+          width: 200px;
+          height: 100vh;
+          background-color: #1e2a38;
           color: white;
-          font-family: 'Segoe UI', sans-serif;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          padding: 1rem;
+          box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+          font-family: Arial, sans-serif;
+        }
+
+        h2 {
+          font-size: 1.2rem;
+          margin-bottom: 1rem;
         }
 
         ul {
-          display: flex;
           list-style: none;
-          gap: 1.5rem;
-          margin: 0;
           padding: 0;
         }
 
         li {
+          padding: 0.5rem 0;
           cursor: pointer;
-          transition: transform 0.3s ease;
         }
 
         li:hover {
-          transform: scale(1.05);
           text-decoration: underline;
-        }
-
-        .integrantes {
-          font-size: 0.9rem;
-          text-align: right;
         }
       </style>
 
-      <nav>
+      <aside>
+        <h2>Navegación</h2>
         <ul>
-          <li>Inicio</li>
-          <li>Acerca de</li>
-          <li>Educate</li>
-          <li>Login</li>
+          <li>Dashboard</li>
+          <li>Recomendaciones</li>
+          <li>Educativo</li>
         </ul>
-        <div class="integrantes">
-          <strong>Integrantes:</strong><br>
-          Herrera Anahy<br>
-          Ortiz Bryan<br>
-          Paredes Camila
-        </div>
-      </nav>
+      </aside>
     `;
   }
 }
 
-customElements.define('main-menu', MainMenu);
+customElements.define('nav-sidebar', NavSidebar);

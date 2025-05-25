@@ -2,21 +2,22 @@ class AirQualityChart extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.API_KEY = 'c4b8733fbed1c527c110076e22b1a4ec';
-    this.LAT = -0.2299;
-    this.LON = -78.5249;
   }
 
   async connectedCallback() {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${this.LAT}&lon=${this.LON}&appid=${this.API_KEY}&units=metric`;
+    const API_KEY = 'd31acd05af6a234c1b1ed81ff75d644e';
+    const LAT = -0.2299;
+    const LON = -78.5249;
+    const URL = `https://api.openweathermap.org/data/3.0/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
+
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("No autorizado o error de red");
-      const data = await response.json();
+      const res = await fetch(URL);
+      if (!res.ok) throw new Error("Error al cargar datos");
+      const data = await res.json();
       this.render();
-      this.loadChart(data);
+      this.loadChart(data.current);
     } catch (error) {
-      this.shadowRoot.innerHTML = `<p style="color:red;">Error al cargar gráfico: ${error.message}</p>`;
+      this.shadowRoot.innerHTML = `<p style="color:red;">${error.message}</p>`;
     }
   }
 
@@ -24,18 +25,12 @@ class AirQualityChart extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .chart-container {
-          width: 100%;
           max-width: 600px;
-          margin: auto;
+          margin: 2rem auto;
           background: #fff;
           padding: 1rem;
           border-radius: 10px;
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        canvas {
-          width: 100%;
-          height: 300px;
         }
       </style>
       <div class="chart-container">
@@ -44,15 +39,15 @@ class AirQualityChart extends HTMLElement {
     `;
   }
 
-  loadChart(data) {
+  loadChart(current) {
     const ctx = this.shadowRoot.getElementById('weatherChart');
     new Chart(ctx, {
       type: 'bar',
       data: {
         labels: ['Temperatura', 'Humedad', 'Viento'],
         datasets: [{
-          label: 'Mediciones actuales',
-          data: [data.main.temp, data.main.humidity, data.wind.speed],
+          label: 'Condiciones actuales',
+          data: [current.temp, current.humidity, current.wind_speed],
           backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56']
         }]
       },
@@ -60,10 +55,7 @@ class AirQualityChart extends HTMLElement {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: {
-            display: true,
-            text: 'Clima actual - Quito'
-          }
+          title: { display: true, text: 'Condiciones actuales - Quito' }
         }
       }
     });

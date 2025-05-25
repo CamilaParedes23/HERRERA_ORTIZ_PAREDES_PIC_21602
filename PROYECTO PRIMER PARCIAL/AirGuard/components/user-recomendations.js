@@ -2,35 +2,33 @@ class UserRecommendations extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.API_KEY = 'c4b8733fbed1c527c110076e22b1a4ec';
-    this.LAT = -0.2299;
-    this.LON = -78.5249;
   }
 
   async connectedCallback() {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${this.LAT}&lon=${this.LON}&appid=${this.API_KEY}&units=metric`;
+    const API_KEY = 'd31acd05af6a234c1b1ed81ff75d644e';
+    const LAT = -0.2299;
+    const LON = -78.5249;
+    const URL = `https://api.openweathermap.org/data/3.0/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
+
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Error de red o clave inválida");
+      const res = await fetch(URL);
+      if (!res.ok) throw new Error("Error al cargar recomendaciones");
       const data = await res.json();
-      const recomendaciones = this.generarRecomendaciones(data);
+      const recomendaciones = this.generarRecomendaciones(data.current);
       this.render(recomendaciones);
     } catch (error) {
-      this.shadowRoot.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      this.shadowRoot.innerHTML = `<p style="color:red;">${error.message}</p>`;
     }
   }
 
-  generarRecomendaciones(data) {
+  generarRecomendaciones(current) {
     const recs = [];
+    if (current.temp > 28) recs.push("Evita el sol directo. Usa bloqueador.");
+    if (current.temp < 10) recs.push("Hace frío. Abrígate bien.");
+    if (current.wind_speed > 5) recs.push("Cuidado con los vientos fuertes.");
+    if (current.weather[0].main.includes("Rain")) recs.push("Lleva paraguas.");
 
-    if (data.main.temp > 28) recs.push("Evita exponerte al sol directo. Usa bloqueador.");
-    if (data.main.temp < 10) recs.push("Abrígate bien, hace mucho frío.");
-    if (data.wind.speed > 5) recs.push("Evita zonas abiertas por fuertes vientos.");
-    if (data.weather[0].main.includes("Rain")) recs.push("Lleva paraguas o impermeable.");
-
-    if (recs.length === 0) recs.push("El clima es ideal. Disfruta tu día con precaución.");
-
-    return recs;
+    return recs.length ? recs : ["Clima ideal. Disfruta tu día con precaución."];
   }
 
   render(recs) {
@@ -43,16 +41,13 @@ class UserRecommendations extends HTMLElement {
           border-radius: 8px;
           font-family: sans-serif;
         }
-
         li {
           margin-bottom: 0.5rem;
         }
       </style>
       <div class="recomendaciones">
         <h3>Recomendaciones del clima</h3>
-        <ul>
-          ${recs.map(r => `<li>${r}</li>`).join('')}
-        </ul>
+        <ul>${recs.map(r => `<li>${r}</li>`).join('')}</ul>
       </div>
     `;
   }
