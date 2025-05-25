@@ -8,14 +8,21 @@ class UserRecommendations extends HTMLElement {
 
   async connectedCallback() {
     const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes&lang=es`;
+    console.log("🔗 URL solicitada:", URL);
 
     try {
       const res = await fetch(URL);
-      if (!res.ok) throw new Error("Error al cargar recomendaciones");
+      console.log("📦 Respuesta cruda:", res);
+
+      if (!res.ok) throw new Error("❌ Error al cargar recomendaciones");
+
       const data = await res.json();
+      console.log("📄 Datos recibidos:", data);
+
       const recomendaciones = this.generarRecomendaciones(data.current);
       this.render(recomendaciones);
     } catch (error) {
+      console.error("⚠️ Error capturado:", error);
       this.shadowRoot.innerHTML = '';
       const errorMsg = document.createElement('p');
       errorMsg.style.color = 'red';
@@ -29,7 +36,7 @@ class UserRecommendations extends HTMLElement {
     if (current.temp_c > 28) recs.push("Evita el sol directo. Usa bloqueador.");
     if (current.temp_c < 10) recs.push("Hace frío. Abrígate bien.");
     if (current.wind_kph > 20) recs.push("Cuidado con los vientos fuertes.");
-    if (current.condition.text.toLowerCase().includes("rain")) recs.push("Lleva paraguas.");
+    if (current.condition.text.toLowerCase().includes("lluvia")) recs.push("Lleva paraguas.");
     return recs.length ? recs : ["Clima ideal. Disfruta tu día con precaución."];
   }
 
@@ -44,14 +51,31 @@ class UserRecommendations extends HTMLElement {
         border: 1px solid #c3e6cb;
         border-radius: 8px;
         font-family: sans-serif;
+        max-width: 100%;
+        box-sizing: border-box;
       }
+
+      h3 {
+        margin-top: 0;
+        font-size: 1.2rem;
+      }
+
       li {
         margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      @media (max-width: 600px) {
+        .recomendaciones {
+          padding: 0.75rem;
+          font-size: 0.95rem;
+        }
       }
     `;
     this.shadowRoot.appendChild(style);
 
-    const container = this.createElementWithClass('div', 'recomendaciones');
+    const container = document.createElement('div');
+    container.className = 'recomendaciones';
 
     const title = document.createElement('h3');
     title.textContent = 'Recomendaciones del clima';
@@ -66,12 +90,6 @@ class UserRecommendations extends HTMLElement {
 
     container.appendChild(list);
     this.shadowRoot.appendChild(container);
-  }
-
-  createElementWithClass(tag, className) {
-    const el = document.createElement(tag);
-    el.className = className;
-    return el;
   }
 }
 
