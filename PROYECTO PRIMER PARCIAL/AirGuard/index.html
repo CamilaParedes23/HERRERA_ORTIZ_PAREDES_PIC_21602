@@ -16,6 +16,10 @@
       flex: 1;
       padding: 1rem;
     }
+    section {
+      padding: 2rem 0;
+      scroll-margin-top: 80px; /* para que no quede tapado por headers fijos */
+    }
   </style>
 </head>
 <body>
@@ -31,20 +35,24 @@
 
     <!-- Contenido principal -->
     <main>
-      <!-- Dashboard con datos en tiempo real -->
-      <air-quality-dashboard></air-quality-dashboard>
 
-      <!-- Gráficos de calidad del aire -->
-      <air-quality-chart></air-quality-chart>
+      <!-- Sección Dashboard -->
+      <section id="dashboard">
+        <air-quality-dashboard></air-quality-dashboard>
+        <air-quality-chart></air-quality-chart>
+      </section>
 
-      <!-- CRUD de recomendaciones -->
-      <data-crud></data-crud>
+      <!-- Sección Recomendaciones -->
+      <section id="recomendaciones">
+        <data-crud></data-crud>
+        <user-recommendations></user-recommendations>
+      </section>
 
-      <!-- Recomendaciones personalizadas -->
-      <user-recommendations></user-recommendations>
+      <!-- Sección Educativo -->
+      <section id="educativo">
+        <education-section></education-section>
+      </section>
 
-      <!-- Sección educativa -->
-      <education-section></education-section>
     </main>
 
   </div>
@@ -52,6 +60,7 @@
   <!-- Scripts de componentes personalizados -->
   <script type="module" src="./components/main-menu.js"></script>
   <script type="module" src="./components/nav-sidebar.js"></script>
+  <script type="module" src="./components/nav-navigation.js"></script>
   <script type="module" src="./components/air-quality-dashboard.js"></script>
   <script type="module" src="./components/air-quality-chart.js"></script>
   <script type="module" src="./components/data-crud.js"></script>

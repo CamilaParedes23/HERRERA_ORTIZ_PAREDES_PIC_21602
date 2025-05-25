@@ -17,7 +17,7 @@ class AirQualityChart extends HTMLElement {
   }
 
   async fetchWeatherData() {
-    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes&lang=es`;
     const res = await fetch(URL);
     if (!res.ok) throw new Error("Error al cargar datos");
     const data = await res.json();

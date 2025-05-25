@@ -1,14 +1,25 @@
+import { setupSidebarNavigation } from './nav-navigation.js';
+
 class NavSidebar extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.handleKeydown = this.handleKeydown.bind(this);
+    this.handleResize = this.handleResize.bind(this);
   }
 
   connectedCallback() {
     this.render();
     this.addEventListeners();
+    setupSidebarNavigation(this);  // ← aquí se conecta el módulo externo
     this.handleResize();
-    window.addEventListener('resize', () => this.handleResize());
+    window.addEventListener('resize', this.handleResize);
+    document.addEventListener('keydown', this.handleKeydown);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('resize', this.handleResize);
+    document.removeEventListener('keydown', this.handleKeydown);
   }
 
   handleResize() {
@@ -20,34 +31,16 @@ class NavSidebar extends HTMLElement {
     }
   }
 
+  handleKeydown(e) {
+    if (e.key === 'Escape' && this.classList.contains('mobile-open')) {
+      this.closeMobile();
+    }
+  }
+
   addEventListeners() {
-    const menuItems = this.shadowRoot.querySelectorAll('li[data-section]');
     const mobileToggle = this.shadowRoot.querySelector('.mobile-toggle');
     const mobileOverlay = this.shadowRoot.querySelector('.mobile-overlay');
-    
-    // Eventos del menú
-    menuItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        // Remover clase activa de todos los elementos
-        menuItems.forEach(i => i.classList.remove('active'));
-        // Agregar clase activa al elemento clickeado
-        e.target.classList.add('active');
-        
-        // Cerrar menú móvil después de seleccionar
-        if (window.innerWidth <= 768) {
-          this.closeMobile();
-        }
-        
-        // Emitir evento personalizado para comunicación con otros componentes
-        const customEvent = new CustomEvent('sidebar-navigation', {
-          detail: { section: e.target.dataset.section },
-          bubbles: true
-        });
-        this.dispatchEvent(customEvent);
-      });
-    });
 
-    // Evento botón hamburguesa
     if (mobileToggle) {
       mobileToggle.addEventListener('click', (e) => {
         e.preventDefault();
@@ -56,24 +49,17 @@ class NavSidebar extends HTMLElement {
       });
     }
 
-    // Cerrar al hacer clic en el overlay
     if (mobileOverlay) {
       mobileOverlay.addEventListener('click', () => {
         this.closeMobile();
       });
     }
-
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.classList.contains('mobile-open')) {
-        this.closeMobile();
-      }
-    });
   }
 
   render() {
     this.shadowRoot.innerHTML = `
       <style>
+        /* Aquí va todo tu CSS (el mismo que enviaste) */
         :host {
           display: block;
           position: sticky;
@@ -193,7 +179,6 @@ class NavSidebar extends HTMLElement {
           transform: translateX(2px) scale(0.98);
         }
 
-        /* Iconos para cada elemento del menú */
         li[data-section="dashboard"]::after {
           content: "📊";
           float: right;
@@ -209,7 +194,6 @@ class NavSidebar extends HTMLElement {
           float: right;
         }
 
-        /* Overlay para cerrar el menú móvil */
         .mobile-overlay {
           position: fixed;
           top: 0;
@@ -223,28 +207,23 @@ class NavSidebar extends HTMLElement {
           pointer-events: auto;
         }
 
-        /* Responsive - Tablet */
         @media (max-width: 1024px) {
           aside {
             width: 200px;
           }
-          
           h2 {
             font-size: 1.1rem;
           }
-          
           li {
             padding: 0.7rem 0.8rem;
             font-size: 0.9rem;
           }
         }
 
-        /* Responsive - Móvil */
         @media (max-width: 768px) {
           .mobile-toggle {
             display: flex !important;
           }
-          
           aside {
             position: fixed;
             top: 0;
@@ -256,32 +235,27 @@ class NavSidebar extends HTMLElement {
             transform: translateX(0);
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           }
-
           :host(.mobile-open) aside {
             left: 0;
             box-shadow: 
               8px 0 30px rgba(0,0,0,0.3),
               inset -1px 0 0 rgba(255,255,255,0.1);
           }
-          
           :host(.mobile-open) .mobile-overlay {
             display: block;
           }
         }
 
-        /* Móvil pequeño */
         @media (max-width: 480px) {
           aside {
             width: 100vw !important;
             border-radius: 0;
           }
-          
           li {
             padding: 1rem;
             font-size: 1rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
           }
-          
           h2 {
             text-align: left;
             padding: 1rem 0;
@@ -295,7 +269,7 @@ class NavSidebar extends HTMLElement {
       <aside>
         <h2>Navegación</h2>
         <ul>
-          <li data-section="dashboard">Dashboard</li>
+          <li data-section="dashboard" class="active">Dashboard</li>
           <li data-section="recomendaciones">Recomendaciones</li>
           <li data-section="educativo">Educativo</li>
         </ul>
@@ -303,12 +277,8 @@ class NavSidebar extends HTMLElement {
     `;
   }
 
-  // Métodos para controlar el menú móvil
   toggleMobile() {
-    console.log('Toggle mobile called'); // Debug
-    console.log('Current classes:', this.className); // Debug
     this.classList.toggle('mobile-open');
-    console.log('New classes:', this.className); // Debug
   }
 
   closeMobile() {
