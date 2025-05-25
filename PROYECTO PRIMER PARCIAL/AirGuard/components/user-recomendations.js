@@ -7,7 +7,7 @@ class UserRecommendations extends HTMLElement {
   }
 
   async connectedCallback() {
-    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes&lang=es`;
 
     try {
       const res = await fetch(URL);
