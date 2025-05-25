@@ -2,13 +2,12 @@ class UserRecommendations extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.apiKey = "9c17a7b62fef43e69e214622252505";
+    this.city = "Quito";
   }
 
   async connectedCallback() {
-    const API_KEY = 'd31acd05af6a234c1b1ed81ff75d644e';
-    const LAT = -0.2299;
-    const LON = -78.5249;
-    const URL = `https://api.openweathermap.org/data/3.0/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
 
     try {
       const res = await fetch(URL);
@@ -23,10 +22,10 @@ class UserRecommendations extends HTMLElement {
 
   generarRecomendaciones(current) {
     const recs = [];
-    if (current.temp > 28) recs.push("Evita el sol directo. Usa bloqueador.");
-    if (current.temp < 10) recs.push("Hace frío. Abrígate bien.");
-    if (current.wind_speed > 5) recs.push("Cuidado con los vientos fuertes.");
-    if (current.weather[0].main.includes("Rain")) recs.push("Lleva paraguas.");
+    if (current.temp_c > 28) recs.push("Evita el sol directo. Usa bloqueador.");
+    if (current.temp_c < 10) recs.push("Hace frío. Abrígate bien.");
+    if (current.wind_kph > 20) recs.push("Cuidado con los vientos fuertes.");
+    if (current.condition.text.toLowerCase().includes("rain")) recs.push("Lleva paraguas.");
 
     return recs.length ? recs : ["Clima ideal. Disfruta tu día con precaución."];
   }
