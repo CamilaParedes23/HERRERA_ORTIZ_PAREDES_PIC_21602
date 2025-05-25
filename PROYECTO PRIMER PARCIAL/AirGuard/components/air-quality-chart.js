@@ -5,19 +5,28 @@ class AirQualityChart extends HTMLElement {
   }
 
   async connectedCallback() {
-    const API_KEY = 'd31acd05af6a234c1b1ed81ff75d644e';
-    const LAT = -0.2299;
-    const LON = -78.5249;
-    const URL = `https://api.openweathermap.org/data/3.0/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
+    const URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=-0.2299&lon=-78.5249';
 
     try {
-      const res = await fetch(URL);
+      const res = await fetch(URL, {
+        headers: {
+          'User-Agent': 'AirQualityChart/1.0 contacto@ejemplo.com'
+        }
+      });
+
       if (!res.ok) throw new Error("Error al cargar datos");
+
       const data = await res.json();
+      const now = data.properties.timeseries[0].data.instant.details;
+
       this.render();
-      this.loadChart(data.current);
+      this.loadChart({
+        temp: now.air_temperature,
+        humidity: now.relative_humidity,
+        wind_speed: now.wind_speed
+      });
     } catch (error) {
-      this.shadowRoot.innerHTML = `<p style="color:red;">${error.message}</p>`;
+      this.shadowRoot.innerHTML = `<p style="color:red;">Error al obtener datos del clima<br>${error.message}</p>`;
     }
   }
 
@@ -44,7 +53,7 @@ class AirQualityChart extends HTMLElement {
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Temperatura', 'Humedad', 'Viento'],
+        labels: ['Temperatura (°C)', 'Humedad (%)', 'Viento (m/s)'],
         datasets: [{
           label: 'Condiciones actuales',
           data: [current.temp, current.humidity, current.wind_speed],
