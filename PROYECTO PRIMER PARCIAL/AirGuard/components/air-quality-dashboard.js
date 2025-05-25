@@ -2,33 +2,27 @@ class AirQualityDashboard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.apiKey = "9c17a7b62fef43e69e214622252505";
+    this.city = "Quito";
   }
 
-  connectedCallback = async () => {
-    const API_KEY = 'd31acd05af6a234c1b1ed81ff75d644e';
-    const LAT = -0.2299;
-    const LON = -78.5249;
-    const URL = `https://api.openweathermap.org/data/3.0/onecall?lat=${LAT}&lon=${LON}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
+  async connectedCallback() {
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
 
     try {
-      const data = await this.fetchData(URL);
-      this.renderDashboard(data.current);
+      const res = await fetch(URL);
+      if (!res.ok) throw new Error("Error al obtener datos del clima");
+      const data = await res.json();
+      this.render(data);
     } catch (error) {
-      this.showError(error.message);
+      this.shadowRoot.innerHTML = `<p style="color:red;">${error.message}</p>`;
     }
-  };
+  }
 
-  fetchData = async (url) => {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Error al obtener datos del clima");
-    return res.json();
-  };
+  render(data) {
+    const current = data.current;
+    const location = data.location;
 
-  showError = (message) => {
-    this.shadowRoot.innerHTML = `<p style="color:red;">${message}</p>`;
-  };
-
-  renderDashboard = (current) => {
     this.shadowRoot.innerHTML = `
       <style>
         .dashboard {
@@ -52,21 +46,18 @@ class AirQualityDashboard extends HTMLElement {
       </style>
 
       <div class="dashboard">
-        <h3>Condiciones actuales</h3>
+        <h3>Condiciones actuales en ${location.name}, ${location.country}</h3>
         <div class="card">
-          ${this.renderInfo(current)}
+          <p><strong>Temperatura:</strong> ${current.temp_c} °C</p>
+          <p><strong>Humedad:</strong> ${current.humidity}%</p>
+          <p><strong>Presión:</strong> ${current.pressure_mb} hPa</p>
+          <p><strong>Viento:</strong> ${current.wind_kph} km/h</p>
+          <p><strong>Condición:</strong> ${current.condition.text}</p>
+          <p><strong>Calidad del aire (PM2.5):</strong> ${current.air_quality.pm2_5.toFixed(2)}</p>
         </div>
       </div>
     `;
-  };
-
-  renderInfo = (data) => `
-    <p><strong>Temperatura:</strong> ${data.temp} °C</p>
-    <p><strong>Humedad:</strong> ${data.humidity}%</p>
-    <p><strong>Presión:</strong> ${data.pressure} hPa</p>
-    <p><strong>Viento:</strong> ${data.wind_speed} m/s</p>
-    <p><strong>Condición:</strong> ${data.weather[0].description}</p>
-  `;
+  }
 }
 
 customElements.define('air-quality-dashboard', AirQualityDashboard);

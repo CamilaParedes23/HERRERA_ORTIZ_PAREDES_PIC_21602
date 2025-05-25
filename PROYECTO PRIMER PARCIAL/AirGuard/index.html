@@ -20,29 +20,34 @@
 </head>
 <body>
 
-  <!-- Menú de navegación principal -->
-  <main-menu></main-menu>
-
   <!-- Barra lateral de navegación -->
   <nav-sidebar></nav-sidebar>
 
-  <!-- Contenido principal -->
-  <main>
-    <!-- Dashboard con datos en tiempo real -->
-    <air-quality-dashboard></air-quality-dashboard>
+  <!-- Contenedor de contenido principal -->
+  <div style="flex: 1; display: flex; flex-direction: column;">
 
-    <!-- Gráficos de calidad del aire -->
-    <air-quality-chart></air-quality-chart>
+    <!-- Menú de navegación superior -->
+    <main-menu></main-menu>
 
-    <!-- CRUD de recomendaciones -->
-    <data-crud></data-crud>
+    <!-- Contenido principal -->
+    <main>
+      <!-- Dashboard con datos en tiempo real -->
+      <air-quality-dashboard></air-quality-dashboard>
 
-    <!-- Recomendaciones personalizadas -->
-    <user-recommendations></user-recommendations>
+      <!-- Gráficos de calidad del aire -->
+      <air-quality-chart></air-quality-chart>
 
-    <!-- Sección educativa -->
-    <education-section></education-section>
-  </main>
+      <!-- CRUD de recomendaciones -->
+      <data-crud></data-crud>
+
+      <!-- Recomendaciones personalizadas -->
+      <user-recommendations></user-recommendations>
+
+      <!-- Sección educativa -->
+      <education-section></education-section>
+    </main>
+
+  </div>
 
   <!-- Scripts de componentes personalizados -->
   <script type="module" src="./components/main-menu.js"></script>
@@ -52,7 +57,7 @@
   <script type="module" src="./components/data-crud.js"></script>
   <script type="module" src="./components/user-recommendations.js"></script>
   <script type="module" src="./components/education-section.js"></script>
-  <!-- Chart.js si usas gráficos -->
+  <!-- Chart.js para gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>

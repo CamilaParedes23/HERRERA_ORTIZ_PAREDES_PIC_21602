@@ -2,28 +2,23 @@ class AirQualityChart extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.apiKey = "9c17a7b62fef43e69e214622252505";
+    this.city = "Quito";
   }
 
   async connectedCallback() {
-    const URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=-0.2299&lon=-78.5249';
+    const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes`;
 
     try {
-      const res = await fetch(URL, {
-        headers: {
-          'User-Agent': 'AirQualityChart/1.0 contacto@ejemplo.com'
-        }
-      });
-
+      const res = await fetch(URL);
       if (!res.ok) throw new Error("Error al cargar datos");
-
       const data = await res.json();
-      const now = data.properties.timeseries[0].data.instant.details;
 
       this.render();
       this.loadChart({
-        temp: now.air_temperature,
-        humidity: now.relative_humidity,
-        wind_speed: now.wind_speed
+        temp: data.current.temp_c,
+        humidity: data.current.humidity,
+        wind_speed: data.current.wind_kph / 3.6  // convertir km/h a m/s
       });
     } catch (error) {
       this.shadowRoot.innerHTML = `<p style="color:red;">Error al obtener datos del clima<br>${error.message}</p>`;
