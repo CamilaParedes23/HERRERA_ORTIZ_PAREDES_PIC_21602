@@ -44,3 +44,7 @@ Se utiliza [WeatherAPI](https://www.weatherapi.com/) para obtener datos meteorol
 ```text
 https://api.weatherapi.com/v1/current.json?key=TU_API_KEY&q=Quito&aqi=yes&lang=es
 ```
+
+**NRC:** 21602  
+**Estudiantes:** Herrera Quinte Anahy Estefania, Ortiz Tomalo Bryan Andres, Paredes Panata Camila Soledad
+
