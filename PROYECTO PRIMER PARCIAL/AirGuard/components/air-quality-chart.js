@@ -69,7 +69,7 @@ class AirQualityChart extends HTMLElement {
 
     //Nuevo gráfico de barras usando chart.js
     new Chart(this.shadowRoot.getElementById('weatherChart'), {
-      type: 'bar',
+      type: 'doughnut',
       data: {
         labels,
         datasets: [{
