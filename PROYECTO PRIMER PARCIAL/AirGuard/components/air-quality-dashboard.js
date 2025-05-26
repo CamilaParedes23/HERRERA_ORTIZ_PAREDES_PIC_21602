@@ -25,8 +25,10 @@ class AirQualityDashboard extends HTMLElement {
   renderDashboard(data) {
     const { location, current } = data;
 
-    this.shadowRoot.innerHTML = ''; // Limpiar todo
+    //Evita duplicación al eliminar cualquier contenido previo del Shadow DOM
+    this.shadowRoot.innerHTML = ''; 
 
+    //Estilos
     const style = document.createElement('style');
     style.textContent = `
       .dashboard {
@@ -53,11 +55,13 @@ class AirQualityDashboard extends HTMLElement {
     `;
     this.shadowRoot.appendChild(style);
 
+    //Contenedor principal dashboard con clase CSS
     const dashboard = this.createElementWithClass('div', 'dashboard');
     const heading = document.createElement('h3');
     heading.textContent = `Condiciones actuales en ${location.name}, ${location.country}`;
     dashboard.appendChild(heading);
 
+    //Creación tarjeta card para mostrar los datos
     const card = this.createElementWithClass('div', 'card');
     const dataItems = [
       ["Temperatura", `${current.temp_c} °C`],
@@ -68,22 +72,28 @@ class AirQualityDashboard extends HTMLElement {
       ["Calidad del aire (PM2.5)", current.air_quality.pm2_5.toFixed(2)]
     ];
 
+    //R
     dataItems.forEach(([label, value]) => {
       const p = document.createElement('p');
       p.innerHTML = `<strong>${label}:</strong> ${value}`;
       card.appendChild(p);
     });
 
+    //La tarjeta se añade al dashboard y luego todo se inserta en el 
+    //Shadow DOM
     dashboard.appendChild(card);
     this.shadowRoot.appendChild(dashboard);
   }
 
+  //Crea un elemento con una clas CSS y lo retorna
   createElementWithClass(tag, className) {
     const el = document.createElement(tag);
     el.className = className;
     return el;
   }
 
+  //Si ocurre un error, limpia el contenido anterior y muestra
+  //un mensaje de error
   showError(message) {
     this.shadowRoot.innerHTML = '';
     const errorMsg = document.createElement('p');

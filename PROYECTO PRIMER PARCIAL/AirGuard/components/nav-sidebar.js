@@ -4,24 +4,33 @@ class NavSidebar extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    //Se asegura que los métodos handleKeydown y handleResize mantengan el contexto
+    //correcto (this) cuando se usen como listeners
     this.handleKeydown = this.handleKeydown.bind(this);
     this.handleResize = this.handleResize.bind(this);
   }
 
   connectedCallback() {
+    //Construye la interfaz HTML y CSS del componente
     this.render();
+    //Se agrega los elementos del menú móvil (toggle, overlay, etc)
     this.addEventListeners();
-    setupSidebarNavigation(this);  // ← aquí se conecta el módulo externo
+    //Llama al módulo externo para navegar po clic entre secciones
+    setupSidebarNavigation(this);  
+    //Detecta el modo movil handleResize y ajusta clases CSS
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
     document.addEventListener('keydown', this.handleKeydown);
   }
 
+  //Método del ciclo de vida que se ejecuta para removver el componente del DOM
   disconnectedCallback() {
+    //Limpia los listeners para evitar fugas de memoria
     window.removeEventListener('resize', this.handleResize);
     document.removeEventListener('keydown', this.handleKeydown);
   }
 
+  //Determina si el ancho de pantalla es modo movil (menor o igual a 768px)
   handleResize() {
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
@@ -31,13 +40,16 @@ class NavSidebar extends HTMLElement {
     }
   }
 
+  //Si el usuario presina Escape y el menú está abierto, lo cierra
   handleKeydown(e) {
     if (e.key === 'Escape' && this.classList.contains('mobile-open')) {
       this.closeMobile();
     }
   }
 
+  //Añade eventos para los botones móviles
   addEventListeners() {
+    //Obtiene referencias al botón hamburguesa y al fondo oscurecido
     const mobileToggle = this.shadowRoot.querySelector('.mobile-toggle');
     const mobileOverlay = this.shadowRoot.querySelector('.mobile-overlay');
 
@@ -49,6 +61,7 @@ class NavSidebar extends HTMLElement {
       });
     }
 
+    //Si el usuario hace clic fuera del menú (overlay), el menú se cierra
     if (mobileOverlay) {
       mobileOverlay.addEventListener('click', () => {
         this.closeMobile();
@@ -56,6 +69,7 @@ class NavSidebar extends HTMLElement {
     }
   }
 
+  //Renderizado del componente
   render() {
     this.shadowRoot.innerHTML = `
       <style>
@@ -277,6 +291,7 @@ class NavSidebar extends HTMLElement {
     `;
   }
 
+  //Métodos del control móvil 
   toggleMobile() {
     this.classList.toggle('mobile-open');
   }

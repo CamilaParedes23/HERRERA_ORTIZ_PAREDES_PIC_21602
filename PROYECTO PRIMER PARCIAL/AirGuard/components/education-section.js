@@ -3,6 +3,7 @@ class EducationSection extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
 
+    //Declaración del arreglo de artículos
     this.articles = [
       {
         title: '¿Qué es el PM2.5?',
@@ -37,10 +38,12 @@ class EducationSection extends HTMLElement {
     ];
   }
 
+  //Construcción de la interfaz
   connectedCallback() {
     this.render();
   }
 
+  //Función que se activa para "Leer más"
   toggleContent(e) {
     const btn = e.currentTarget;
     const content = btn.previousElementSibling;
@@ -48,9 +51,12 @@ class EducationSection extends HTMLElement {
     btn.textContent = expanded ? 'Leer menos ▲' : 'Leer más ▼';
   }
 
+  //Método principal de renderizado
   render() {
     this.shadowRoot.innerHTML = '';
 
+    //Crea un bloque style con los estilos para el diseño responsivo
+    //Y se añade al shadow DOM
     const style = document.createElement('style');
     style.textContent = `
       section {
@@ -136,23 +142,30 @@ class EducationSection extends HTMLElement {
     `;
     this.shadowRoot.appendChild(style);
 
+    //Contenedor section 
     const section = document.createElement('section');
     const title = document.createElement('h3');
     title.textContent = 'Educación sobre la Contaminación del Aire';
     section.appendChild(title);
 
+    //Itera sobre cada artículo del arreglo artículo
     this.articles.forEach(({ title, content, image }) => {
+      //Crea un card usando un método auxiliar que añada clase CSS 
       const card = this.createElementWithClass('article', 'card');
 
+      //Creación de la imagen para la tarjeta ícono
       const img = document.createElement('img');
       img.src = image;
       img.alt = title;
 
+      //Contenedor para el contenido textual
       const contentDiv = this.createElementWithClass('div', 'card-content');
 
+      //Crea un subtítulo para cada artículo 
       const h4 = document.createElement('h4');
       h4.textContent = title;
 
+      //Párrafo
       const p = document.createElement('p');
       p.textContent = content;
 
@@ -161,6 +174,7 @@ class EducationSection extends HTMLElement {
       btn.className = 'toggle-btn';
       btn.addEventListener('click', e => this.toggleContent(e));
 
+      //Se agregan todos los elementos creados a su contenedor correspondiente
       contentDiv.appendChild(h4);
       contentDiv.appendChild(p);
       contentDiv.appendChild(btn);
@@ -173,6 +187,8 @@ class EducationSection extends HTMLElement {
     this.shadowRoot.appendChild(section);
   }
 
+  //Creaación de un método utilitario que crea un elemento 
+  //con la clase específicada
   createElementWithClass(tag, className) {
     const el = document.createElement(tag);
     el.className = className;

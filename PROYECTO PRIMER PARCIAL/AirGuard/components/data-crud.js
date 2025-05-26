@@ -2,16 +2,23 @@ class DataCrud extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    //se inicia un array vacío
     this.recomendaciones = JSON.parse(localStorage.getItem('recomendaciones')) || [];
+    //Se inicializa el editingIndex con -1 para indicar que no hay
+    //edición activa
     this.editingIndex = -1;
   }
 
+  //Renderización de la interfaz y asignación de los eventos
+  //a los botones y entradas
   connectedCallback() {
     this.render();
     this.attachEvents();
   }
 
+  //este método configura todos los eventeListeners para los botones
   attachEvents() {
+    //Obtención de referencias a los elementos HTML
     const addBtn = this.shadowRoot.querySelector('#addBtn');
     const input = this.shadowRoot.querySelector('#recoInput');
     const searchInput = this.shadowRoot.querySelector('#searchInput');
@@ -96,7 +103,7 @@ class DataCrud extends HTMLElement {
   renderList() {
     const list = this.shadowRoot.querySelector('#recoList');
     const emptyState = this.shadowRoot.querySelector('#emptyState');
-    const count = this.shadowRoot.querySelector('#count');
+    const count = this.shadowRoot.querySelector('#count'); 
     
     list.innerHTML = '';
     count.textContent = `${this.recomendaciones.length} elementos`;

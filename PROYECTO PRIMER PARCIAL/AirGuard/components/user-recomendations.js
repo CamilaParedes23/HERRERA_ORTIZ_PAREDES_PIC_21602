@@ -6,7 +6,10 @@ class UserRecommendations extends HTMLElement {
     this.city = "Quito";
   }
 
+  //Método se ejecuta automáticamente cuando el componente se inserta
+  //en el documento
   async connectedCallback() {
+    //Se construye la URL para consultar el clima actual con calidad del aire
     const URL = `https://api.weatherapi.com/v1/current.json?key=${this.apiKey}&q=${this.city}&aqi=yes&lang=es`;
     console.log("🔗 URL solicitada:", URL);
 
@@ -19,10 +22,13 @@ class UserRecommendations extends HTMLElement {
       const data = await res.json();
       console.log("📄 Datos recibidos:", data);
 
+      //Genera recomendaciones personalizadas en base a los datos del clima
+      //actual y se renderiza en pantalla
       const recomendaciones = this.generarRecomendaciones(data.current);
       this.render(recomendaciones);
     } catch (error) {
       console.error("⚠️ Error capturado:", error);
+      //Limpia el contenido del Shadow DOM 
       this.shadowRoot.innerHTML = '';
       const errorMsg = document.createElement('p');
       errorMsg.style.color = 'red';
@@ -31,6 +37,7 @@ class UserRecommendations extends HTMLElement {
     }
   }
 
+  //Método para generar las recomendaciones
   generarRecomendaciones(current) {
     const recs = [];
     if (current.temp_c > 28) recs.push("Evita el sol directo. Usa bloqueador.");
@@ -40,6 +47,7 @@ class UserRecommendations extends HTMLElement {
     return recs.length ? recs : ["Clima ideal. Disfruta tu día con precaución."];
   }
 
+  //se limpia el Shadow DOM antes de renderizar
   render(recs) {
     this.shadowRoot.innerHTML = '';
 
@@ -81,6 +89,7 @@ class UserRecommendations extends HTMLElement {
     title.textContent = 'Recomendaciones del clima';
     container.appendChild(title);
 
+    //Creación de lista con cada recomendación, generada previamente
     const list = document.createElement('ul');
     recs.forEach(rec => {
       const li = document.createElement('li');
