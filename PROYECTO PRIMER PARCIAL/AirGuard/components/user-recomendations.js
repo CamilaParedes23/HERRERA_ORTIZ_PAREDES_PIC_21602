@@ -15,19 +15,19 @@ class UserRecommendations extends HTMLElement {
 
     try {
       const res = await fetch(URL);
-      console.log("📦 Respuesta cruda:", res);
+      console.log("Respuesta cruda:", res);
 
-      if (!res.ok) throw new Error("❌ Error al cargar recomendaciones");
+      if (!res.ok) throw new Error("Error al cargar recomendaciones");
 
       const data = await res.json();
-      console.log("📄 Datos recibidos:", data);
+      console.log("Datos recibidos:", data);
 
       //Genera recomendaciones personalizadas en base a los datos del clima
       //actual y se renderiza en pantalla
       const recomendaciones = this.generarRecomendaciones(data.current);
       this.render(recomendaciones);
     } catch (error) {
-      console.error("⚠️ Error capturado:", error);
+      console.error("Error capturado:", error);
       //Limpia el contenido del Shadow DOM 
       this.shadowRoot.innerHTML = '';
       const errorMsg = document.createElement('p');
