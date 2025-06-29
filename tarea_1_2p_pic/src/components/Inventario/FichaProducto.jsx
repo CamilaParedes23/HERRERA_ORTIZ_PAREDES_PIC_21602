@@ -53,7 +53,7 @@ const FichaProducto = ({
             />
           </td>
           <td>
-            <button onClick={agregarProducto} disabled={!esValido()}>
+            <button onClick={agregarProducto}>
               Agregar
             </button>
           </td>
