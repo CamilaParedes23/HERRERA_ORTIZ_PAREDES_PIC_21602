@@ -40,3 +40,25 @@
 .read-the-docs {
   color: #888;
 }
+
+.inventario {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.agregar-producto input {
+  margin: 0.2rem;
+  padding: 0.2rem;
+}
+
+.agregar-producto button {
+  margin-left: 0.2rem;
+}
+
+.producto {
+  border: 1px solid #ccc;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
