@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import FichaProducto from './FichaProducto';
 
 const Inventario = () => {
+  // data hardcoded
   const [productos, setProductos] = useState([
-    { id: 1, nombre: "Producto inicial", cantidad: 0, precio: 0 }
+    { id: 1, nombre: "Producto inicial", cantidad: 0, precio: 0 },
+    { id: 2, nombre: "Producto inicial 1", cantidad: 1, precio: 1 }
   ]);
+
   const [nuevoProducto, setNuevoProducto] = useState({ nombre: '', cantidad: '0', precio: '0' });
+  
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState(''); // 'exito' o 'error'
 
@@ -54,14 +58,9 @@ const Inventario = () => {
     
   
 
-  const actualizarProducto = (id, campo, nuevoValor) => {
-    if ((campo === 'cantidad' || campo === 'precio') && parseFloat(nuevoValor) < 0) {
-      setMensaje("No se pueden ingresar números negativos en cantidad o precio");
-      setTipoMensaje('error');
-      return;
-    }
+  const actualizarProducto = (id, nombre, cantidad, precio) => {
     setProductos(productos.map(p =>
-      p.id === id ? { ...p, [campo]: campo === 'nombre' ? nuevoValor : parseFloat(nuevoValor) } : p
+      p.id === id ? { ...p, nombre, cantidad: parseFloat(cantidad), precio: parseFloat(precio) } : p
     ));
     setMensaje("Producto actualizado correctamente");
     setTipoMensaje('exito');

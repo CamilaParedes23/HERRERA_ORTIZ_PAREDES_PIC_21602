@@ -7,9 +7,7 @@ const Producto = ({ id, nombre, cantidad, precio, actualizarProducto, eliminarPr
   const [nuevoPrecio, setNuevoPrecio] = useState(precio);
 
   const guardarCambios = () => {
-    actualizarProducto([id, 'nombre', nuevoNombre]);
-    actualizarProducto([id, 'cantidad', nuevaCantidad]);
-    actualizarProducto([id, 'precio', nuevoPrecio]);
+    actualizarProducto(id, nuevoNombre, nuevaCantidad, nuevoPrecio);
     setEditando(false);
   };
 
