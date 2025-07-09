@@ -1,15 +1,23 @@
-const app = require('./app');
-const pool = require('./config/bd');
+// server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const authRoutes = require('./routes/authRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const userRoutes = require('./routes/userRoutes');
 
-const PORT = process.env.PORT || 3000;
+const app = express();
+const port = 3000;
 
-pool.connect((err)=>{
-    if(err){
-        console.log('Error al conectar la base de datos:', err);
-    } else {
-        console.log('Conectado a la base de datos de PostgreSQL correctamente');
-    }
-});
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.use(cors()); // Middleware para manejar CORS
+app.use(bodyParser.json());
+
+app.use('/auth', authRoutes);
+app.use('/api', courseRoutes);
+app.use('/api', subscriptionRoutes);
+app.use('/api', userRoutes);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
