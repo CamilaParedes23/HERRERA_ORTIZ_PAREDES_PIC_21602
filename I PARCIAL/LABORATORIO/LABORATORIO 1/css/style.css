@@ -1,0 +1,157 @@
+/* Reset básico */
+/*Se eliminan los márgenes por defecto y 
+se aplicó una fuente ligeble*/
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header y Footer */
+/*Se aplicó estilos consistentes para el encabezado y pie de página*/
+header, footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Contenedor general */
+/* Flexbox horizontal que envuelve sidebar y contenido principal */
+.container {
+    display: flex;
+    /* Permite que los elementos bajen si no caben */
+    flex-wrap: wrap;
+    min-height: 80vh;
+}
+
+/* Sidebar */
+aside {
+    width: 200px;
+    background-color: #34495e;
+    padding: 20px;
+    color: white;
+}
+/* Retiro del margen superior del título para alinearlo mejor */
+aside h3 {
+    margin-top: 0;
+}
+/*Se eliminan viñetas y espaciado del menú*/
+aside ul {
+    list-style: none;
+    padding: 0;
+}
+/* Espacio entre elementos del menú */
+aside ul li {
+    margin-bottom: 10px;
+}
+/* Estilo de enlaces del menú lateral */
+aside ul li a {
+    /* Se retira el subrayado */
+    text-decoration: none;
+    color: white;
+    padding: 8px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+/* Efecto hover para dar retroalimentación al usuario */
+aside ul li a:hover {
+    background-color: #1abc9c;
+}
+
+/* Main */
+/* Sección principal que ocupa el espacio restante */
+main {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Galería de imágenes */
+.gallery-container {
+    display: grid;
+    /* Columnas automáticas con mínimo de 150px */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Espacio entre tarjetas */
+    gap: 15px;
+}
+/* Cada imagen y su título */
+.gallery-item {
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+/* Estilo de las imágenes */
+.gallery-item img {
+    width: 150px;
+    height: 150px;
+    /* Recorta la imagen para que llene el contenedor sin deformarse */
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  
+
+/* Formulario de registro */
+/* Estilo del formulario como una tarjeta */
+.register-form {
+    display: grid;
+    gap: 15px;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+/* Destaca las etiquetas del formulario */
+.register-form label {
+    font-weight: bold;
+}
+
+/* Agrupa cada fila del formulario horizontalmente */
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* Estilo de los campos de entrada */
+.register-form input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+/* Botón de envío con estilo visual atractivo */
+.register-form button {
+    padding: 10px;
+    border: none;
+    background-color: #1abc9c;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+/* Cambia el color del botón al pasar el mouse */
+.register-form button:hover {
+    background-color: #16a085;
+}
+
+/* Diseño responsivo*/
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
