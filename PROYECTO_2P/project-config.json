@@ -1,0 +1,139 @@
+{
+  "project": {
+    "name": "E-Commerce System",
+    "version": "1.0.0",
+    "description": "Sistema completo de gestión de productos y órdenes",
+    "author": "Camila Paredes",
+    "created": "2024",
+    "type": "Full-Stack Web Application"
+  },
+  "architecture": {
+    "pattern": "Clean Architecture",
+    "frontend": {
+      "framework": "React",
+      "language": "TypeScript",
+      "routing": "React Router DOM",
+      "http": "Fetch API",
+      "styling": "CSS3"
+    },
+    "backend": {
+      "runtime": "Node.js",
+      "framework": "Express",
+      "language": "TypeScript",
+      "architecture": "Layered Architecture",
+      "api": "RESTful"
+    },
+    "database": {
+      "engine": "PostgreSQL",
+      "version": "13+",
+      "host": "localhost",
+      "port": 5432,
+      "name": "ecommerce_db"
+    }
+  },
+  "services": {
+    "frontend": {
+      "port": 3000,
+      "url": "http://localhost:3000",
+      "build": "npm run build",
+      "dev": "npm start"
+    },
+    "backend": {
+      "port": 3001,
+      "url": "http://localhost:3001",
+      "api": "http://localhost:3001/api",
+      "build": "npm run build",
+      "dev": "npm run dev"
+    }
+  },
+  "features": {
+    "products": {
+      "description": "Gestión completa de productos",
+      "operations": ["Create", "Read", "Update", "Delete"],
+      "validations": ["Stock management", "Price validation"]
+    },
+    "orders": {
+      "description": "Gestión de órdenes de clientes",
+      "operations": ["Create", "Read", "Update", "Delete"],
+      "relationships": ["Order Details", "Products"]
+    },
+    "orderDetails": {
+      "description": "Detalles de productos en órdenes",
+      "operations": ["Create", "Read", "Update", "Delete"],
+      "calculations": ["Total amount", "Stock updates"]
+    }
+  },
+  "database_schema": {
+    "tables": {
+      "productos": {
+        "columns": ["id_producto", "nombre", "precio", "stock", "created_at", "updated_at"],
+        "constraints": ["Primary Key", "Price > 0", "Stock >= 0"]
+      },
+      "ordenes": {
+        "columns": ["id_orden", "fecha", "cliente", "created_at", "updated_at"],
+        "constraints": ["Primary Key", "Client not null"]
+      },
+      "detalles_orden": {
+        "columns": ["id_detalle", "id_orden", "id_producto", "cantidad", "precio_unitario", "created_at", "updated_at"],
+        "constraints": ["Primary Key", "Foreign Keys", "Quantity > 0", "Price > 0", "Unique per order-product"]
+      }
+    }
+  },
+  "development": {
+    "requirements": {
+      "node": "v18+",
+      "npm": "v8+",
+      "postgresql": "v13+"
+    },
+    "setup_steps": [
+      "1. Install Node.js and PostgreSQL",
+      "2. Create database 'ecommerce_db'",
+      "3. Run 'npm install' in backend and frontend",
+      "4. Configure environment variables",
+      "5. Run 'npm run dev' in backend",
+      "6. Run 'npm start' in frontend"
+    ],
+    "quick_start": {
+      "windows": "Double-click start-dev.bat",
+      "linux_mac": "Run ./start-dev.sh"
+    }
+  },
+  "endpoints": {
+    "products": {
+      "base": "/api/products",
+      "methods": {
+        "GET /": "Get all products",
+        "GET /:id": "Get product by ID",
+        "POST /": "Create new product",
+        "PUT /:id": "Update product",
+        "DELETE /:id": "Delete product"
+      }
+    },
+    "orders": {
+      "base": "/api/orders",
+      "methods": {
+        "GET /": "Get all orders",
+        "GET /:id": "Get order by ID",
+        "POST /": "Create new order",
+        "PUT /:id": "Update order",
+        "DELETE /:id": "Delete order"
+      }
+    },
+    "orderDetails": {
+      "base": "/api/order-details",
+      "methods": {
+        "GET /": "Get all order details",
+        "GET /:id": "Get order detail by ID",
+        "POST /": "Create new order detail",
+        "PUT /:id": "Update order detail",
+        "DELETE /:id": "Delete order detail"
+      }
+    },
+    "health": {
+      "base": "/api/health",
+      "methods": {
+        "GET /": "Check API health status"
+      }
+    }
+  }
+}
